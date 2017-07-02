@@ -216,13 +216,13 @@ class MinimaxPlayer(IsolationPlayer):
         if not moves:
             return (-1, 1)
         _, move = max([
-            (self.minimizer(game.forecast_move(m), depth - 1), m)
+            (self.evaluate(game.forecast_move(m), depth - 1), m)
             for m in moves
         ])
         return move
 
-    def maximizer(self, game, depth):
-        """Returns a score with active player as a maximizer
+    def evaluate(self, game, depth):
+        """Returns a evaluation score
         """
         if self.time_left() < self.TIMER_THRESHOLD:
             raise SearchTimeout()
@@ -233,27 +233,16 @@ class MinimaxPlayer(IsolationPlayer):
         if depth == 0:
             return self.score(game, self)
         moves = game.get_legal_moves()
-        return max([
-            self.minimizer(game.forecast_move(m), depth - 1)
-            for m in moves
-        ])
-
-    def minimizer(self, game, depth):
-        """Returns a score with active player as a minimizer
-        """
-        if self.time_left() < self.TIMER_THRESHOLD:
-            raise SearchTimeout()
-        if game.is_winner(self):
-            return float("inf")
-        if game.is_loser(self):
-            return float("-inf")
-        if depth == 0:
-            return self.score(game, self)
-        moves = game.get_legal_moves()
-        return min([
-            self.maximizer(game.forecast_move(m), depth - 1)
-            for m in moves
-        ])
+        if self == game.active_player: # Maximizer
+            return max([
+                self.evaluate(game.forecast_move(m), depth - 1)
+                for m in moves
+            ])
+        else: # Minimizer
+            return min([
+                self.evaluate(game.forecast_move(m), depth - 1)
+                for m in moves
+            ])
 
 
 class AlphaBetaPlayer(IsolationPlayer):
