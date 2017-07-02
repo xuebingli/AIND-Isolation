@@ -212,10 +212,48 @@ class MinimaxPlayer(IsolationPlayer):
         if self.time_left() < self.TIMER_THRESHOLD:
             raise SearchTimeout()
 
-        legal_moves = game.get_legal_moves()[0]
-        if not legal_moves:
+        moves = game.get_legal_moves()
+        if not moves:
             return (-1, 1)
-        return legal_moves[0]
+        _, move = max([
+            (self.minimizer(game.forecast_move(m), depth - 1), m)
+            for m in moves
+        ])
+        return move
+
+    def maximizer(self, game, depth):
+        """Returns a score with active player as a maximizer
+        """
+        if self.time_left() < self.TIMER_THRESHOLD:
+            raise SearchTimeout()
+        if game.is_winner(self):
+            return float("inf")
+        if game.is_loser(self):
+            return float("-inf")
+        if depth == 0:
+            return self.score(game, self)
+        moves = game.get_legal_moves()
+        return max([
+            self.minimizer(game.forecast_move(m), depth - 1)
+            for m in moves
+        ])
+
+    def minimizer(self, game, depth):
+        """Returns a score with active player as a minimizer
+        """
+        if self.time_left() < self.TIMER_THRESHOLD:
+            raise SearchTimeout()
+        if game.is_winner(self):
+            return float("inf")
+        if game.is_loser(self):
+            return float("-inf")
+        if depth == 0:
+            return self.score(game, self)
+        moves = game.get_legal_moves()
+        return min([
+            self.maximizer(game.forecast_move(m), depth - 1)
+            for m in moves
+        ])
 
 
 class AlphaBetaPlayer(IsolationPlayer):
