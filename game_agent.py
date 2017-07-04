@@ -334,5 +334,7 @@ class AlphaBetaPlayer(IsolationPlayer):
         if self.time_left() < self.TIMER_THRESHOLD:
             raise SearchTimeout()
 
-        # TODO: finish this function!
-        raise NotImplementedError
+        moves = game.get_legal_moves()
+        if not moves:
+            return (-1, -1)
+        return moves[0]
