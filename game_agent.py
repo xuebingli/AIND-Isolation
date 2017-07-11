@@ -337,4 +337,40 @@ class AlphaBetaPlayer(IsolationPlayer):
         moves = game.get_legal_moves()
         if not moves:
             return (-1, -1)
-        return moves[0]
+        max_score, best_move = (float("-inf"), (-1, -1))
+        for move in moves:
+            game_forecast = game.forecast_move(move)
+            move_score = self.evaluate(game_forecast, depth - 1, alpha, beta)
+            max_score, best_move = max((max_score, best_move), (move_score, move))
+            alpha = max(alpha, max_score)
+            if beta <= alpha:
+                break
+        return best_move
+
+    def evaluate(self, game, depth, alpha, beta):
+        """Evaluate a game and return an evaluation score
+        """
+        if self.time_left() < self.TIMER_THRESHOLD:
+            raise SearchTimeout()
+        if depth == 0 or game.is_winner(self) or game.is_loser(self):
+            return self.score(game, self)
+        if self == game.active_player: # Maximizer
+            max_score = float("-inf")
+            for move in game.get_legal_moves():
+                game_forecast = game.forecast_move(move)
+                move_score = self.evaluate(game_forecast, depth - 1, alpha, beta)
+                max_score = max(max_score, move_score)
+                alpha = max(alpha, max_score)
+                if beta <= alpha:
+                    break
+            return max_score
+        else: # Minimizer
+            min_score = float("inf")
+            for move in game.get_legal_moves():
+                game_forecast = game.forecast_move(move)
+                move_score = self.evaluate(game_forecast, depth - 1, alpha, beta)
+                min_score = min(min_score, move_score)
+                beta = min(beta, min_score)
+                if beta <= alpha:
+                    break
+            return min_score
