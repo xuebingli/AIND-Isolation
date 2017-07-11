@@ -48,7 +48,7 @@ class IsolationTest(unittest.TestCase):
     def setUp(self):
         reload(game_agent)
 
-    def test_player_1_against_greedy(self):
+    def test_minimax_against_greedy_1(self):
         """Minimax player as player 1 and greedy player as player 2
         """
         greedy_player = sample_players.GreedyPlayer(score_fn=sample_players.open_move_score)
@@ -56,13 +56,29 @@ class IsolationTest(unittest.TestCase):
         winner = play_game(player1=minimax_player, player2=greedy_player)
         self.assertEqual(winner, minimax_player)
 
-    def test_player_2_against_greedy(self):
+    def test_minimax_against_greedy_2(self):
         """Greedy player as player 1 and minimax player as player 2
         """
         greedy_player = sample_players.GreedyPlayer(score_fn=sample_players.open_move_score)
         minimax_player = game_agent.MinimaxPlayer(score_fn=sample_players.open_move_score)
         winner = play_game(player1=greedy_player, player2=minimax_player)
         self.assertEqual(winner, minimax_player)
+
+    def test_alphabeta_against_greedy_1(self):
+        """Alphabeta player as player 1 and greedy player as player 2
+        """
+        greedy_player = sample_players.GreedyPlayer(score_fn=sample_players.center_score)
+        alphabeta_player = game_agent.AlphaBetaPlayer(score_fn=sample_players.center_score)
+        winner = play_game(player1=alphabeta_player, player2=greedy_player)
+        self.assertEqual(winner, alphabeta_player)
+
+    def test_alphabeta_against_greedy_2(self):
+        """Greedy player as player 1 and alphabeta player as player 2
+        """
+        greedy_player = sample_players.GreedyPlayer(score_fn=sample_players.center_score)
+        alphabeta_player = game_agent.AlphaBetaPlayer(score_fn=sample_players.center_score)
+        winner = play_game(player1=greedy_player, player2=alphabeta_player)
+        self.assertEqual(winner, alphabeta_player)
 
 if __name__ == '__main__':
     unittest.main()
