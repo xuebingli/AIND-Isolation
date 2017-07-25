@@ -41,9 +41,9 @@ def custom_score(game, player):
     w, h = game.width / 2., game.height / 2.
     total = 0
     for y, x in game.get_legal_moves(player):
-        total += -((h - y) ** 2 + (w - x) ** 2)
+        total += 1 / ((h - y) ** 2 + (w - x) ** 2)
     for y, x in game.get_legal_moves(game.get_opponent(player)):
-        total -= -((h - y) ** 2 + (w - x) ** 2)
+        total -= 1 / ((h - y) ** 2 + (w - x) ** 2)
     return total
 
 
@@ -76,9 +76,9 @@ def custom_score_2(game, player):
     w, h = game.width / 2., game.height / 2.
     total = 0
     for y, x in game.get_legal_moves(player):
-        total += 1 / ((h - y) ** 2 + (w - x) ** 2)
+        total += ((h - y) ** 2 + (w - x) ** 2)
     for y, x in game.get_legal_moves(game.get_opponent(player)):
-        total -= 1 / ((h - y) ** 2 + (w - x) ** 2)
+        total -= ((h - y) ** 2 + (w - x) ** 2)
     return total
 
 
@@ -108,10 +108,13 @@ def custom_score_3(game, player):
         return float("inf")
     if game.is_loser(player):
         return float("-inf")
-    blank_count = len(game.get_blank_spaces())
-    own_count = len(game.get_legal_moves(player))
-    oppo_count = len(game.get_legal_moves(game.get_opponent(player)))
-    return float(own_count / blank_count - oppo_count / blank_count)
+    w, h = game.width / 2., game.height / 2.
+    total = 0
+    for y, x in game.get_legal_moves(player):
+        total += 1 / ((h - y) ** 2 + (w - x) ** 2)
+    for y, x in game.get_legal_moves(game.get_opponent(player)):
+        total -= (h - y) ** 2 + (w - x) ** 2
+    return total
 
 
 class IsolationPlayer:
