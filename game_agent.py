@@ -104,17 +104,20 @@ def custom_score_3(game, player):
     float
         The heuristic value of the current game state to the specified player.
     """
-    if game.is_winner(player):
-        return float("inf")
-    if game.is_loser(player):
-        return float("-inf")
-    w, h = game.width / 2., game.height / 2.
+    if game.utility(player):
+        return game.utility(player)
+    directions = [(-2, -1), (-2, 1), (-1, -2), (-1, 2),
+                  (1, -2), (1, 2), (2, -1), (2, 1)]
     total = 0
-    for y, x in game.get_legal_moves(player):
-        total += 1 / ((h - y) ** 2 + (w - x) ** 2)
-    for y, x in game.get_legal_moves(game.get_opponent(player)):
-        total -= (h - y) ** 2 + (w - x) ** 2
-    return total
+    for r, c in game.get_legal_moves(player):
+        valid_next_moves = [(r + dr, c + dc) for dr, dc in directions
+                            if game.move_is_legal((r + dr, c + dc))]
+        total += len(valid_next_moves)
+    for r, c in game.get_legal_moves(game.get_opponent(player)):
+        valid_next_moves = [(r + dr, c + dc) for dr, dc in directions
+                            if game.move_is_legal((r + dr, c + dc))]
+        total -= len(valid_next_moves)
+    return float(total)
 
 
 class IsolationPlayer:
