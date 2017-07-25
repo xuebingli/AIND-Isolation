@@ -352,11 +352,14 @@ class AlphaBetaPlayer(IsolationPlayer):
         moves = game.get_legal_moves()
         if not moves:
             return (-1, -1)
-        max_score, best_move = (float("-inf"), (-1, -1))
+        max_score = float("-inf")
+        best_move = (-1, -1)
         for move in moves:
             game_forecast = game.forecast_move(move)
             move_score = self.evaluate(game_forecast, depth - 1, alpha, beta)
-            max_score, best_move = max((max_score, best_move), (move_score, move))
+            if move_score > max_score:
+                best_move = move
+                max_score = move_score
             alpha = max(alpha, max_score)
             if beta <= alpha:
                 break
@@ -367,7 +370,7 @@ class AlphaBetaPlayer(IsolationPlayer):
         """
         if self.time_left() < self.TIMER_THRESHOLD:
             raise SearchTimeout()
-        if depth == 0 or game.is_winner(self) or game.is_loser(self):
+        if depth == 0:
             return self.score(game, self)
         if self == game.active_player: # Maximizer
             max_score = float("-inf")
