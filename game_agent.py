@@ -34,8 +34,17 @@ def custom_score(game, player):
     float
         The heuristic value of the current game state to the specified player.
     """
-    # TODO: finish this function!
-    raise NotImplementedError
+    if game.is_winner(player):
+        return float("inf")
+    if game.is_loser(player):
+        return float("-inf")
+    w, h = game.width / 2., game.height / 2.
+    total = 0
+    for y, x in game.get_legal_moves(player):
+        total += -((h - y) ** 2 + (w - x) ** 2)
+    for y, x in game.get_legal_moves(game.get_opponent(player)):
+        total -= -((h - y) ** 2 + (w - x) ** 2)
+    return total
 
 
 def custom_score_2(game, player):
@@ -60,8 +69,16 @@ def custom_score_2(game, player):
     float
         The heuristic value of the current game state to the specified player.
     """
-    # TODO: finish this function!
-    raise NotImplementedError
+    if game.is_winner(player):
+        return float("inf")
+    if game.is_loser(player):
+        return float("-inf")
+    w, h = game.width / 2., game.height / 2.
+    total = 0
+    for y, x in game.get_legal_moves(player):
+        # Evaluate each move by its "distance" from center
+        total += -((h - y) ** 2 + (w - x) ** 2)
+    return total
 
 
 def custom_score_3(game, player):
@@ -86,8 +103,13 @@ def custom_score_3(game, player):
     float
         The heuristic value of the current game state to the specified player.
     """
-    # TODO: finish this function!
-    raise NotImplementedError
+    if game.is_winner(player):
+        return float("inf")
+    if game.is_loser(player):
+        return float("-inf")
+    blank_count = len(game.get_blank_spaces())
+    moves_count = len(game.get_legal_moves(player))
+    return float(moves_count / (blank_count + moves_count))
 
 
 class IsolationPlayer:
